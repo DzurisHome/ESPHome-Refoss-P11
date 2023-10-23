@@ -12,7 +12,7 @@
 
 </br>
 
-`{"NAME":"Refoss-P11","GPIO":[0,0,0,3104,576,32,0,0,320,224,0,0,0,4736],"FLAG":0,"BASE":1}`
+`https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Refoss%20P11.yaml`
 
 </br>
 
