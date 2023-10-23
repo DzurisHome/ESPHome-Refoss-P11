@@ -16,8 +16,8 @@
 
 </br>
 
-![Tasmota Refoss P11](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Tasmota%20Refoss%20P11.png)
-![Tasmota Refoss P11 Template parameters](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Tasmota%20Refoss%20P11%20Template%20parameters.png)
+![ESPHome Refoss P11](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/ESPHome%20Refoss%20P11.png)
+![ESPHome Refoss P11 Home Assistant](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/ESPHome%20Refoss%20P11%20Home%20Assistant.png)
 ![Refoss P11 Plug](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Refoss%20P11%20Plug.jpg)
 
 ## [LinkTree](https://linktr.ee/DzurisHome)
