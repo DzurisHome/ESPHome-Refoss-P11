@@ -1,0 +1,215 @@
+#ESPHome Core
+esphome:
+  name: bedroom-radiator-socket
+  area: Bedroom
+
+esp8266:
+  board: esp01_1m
+
+#Logger
+logger:
+  baud_rate: 0
+
+#WiFi
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  manual_ip:
+    static_ip: 192.168.0.151
+    gateway: 192.168.0.1
+    subnet: 255.255.255.0
+
+  ap:
+    ssid: "Bedroom Radiator Socket DH AP"
+    password: !secret ap_password
+
+captive_portal:
+
+#Web Server
+web_server:
+  port: 80
+  auth:
+    username: !secret web_server_username
+    password: !secret web_server_password
+
+#OTA
+ota:
+  safe_mode: true
+  password: !secret ota_password
+
+#MQTT
+mqtt:
+  broker: !secret mqtt_broker_ip_address
+  username: !secret mqtt_broker_username
+  password: !secret mqtt_broker_password
+  client_id: "Bedroom Radiator Socket"
+  discovery: false
+  topic_prefix: "Bedroom Radiator Socket"
+
+#ESPHome API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+#SNTP Time
+time:
+  - platform: sntp
+    timezone: Europe/Bratislava
+    servers:
+     - 1.sk.pool.ntp.org
+     - 0.europe.pool.ntp.org
+     - 1.europe.pool.ntp.org
+
+#Device Required
+uart:
+  rx_pin: GPIO03
+  baud_rate: 4800
+  id: power_monitoring
+
+#Device
+switch:
+  - platform: gpio
+    pin: GPIO13
+    restore_mode: ALWAYS_OFF
+    id: relay
+    name: "Bedroom Radiator"
+    icon: mdi:radiator
+    on_turn_on:
+      - switch.turn_on: led
+      #Automation
+      - delay: 3hours
+      - if:
+          condition:
+            - switch.is_on: relay
+          then:
+            - switch.turn_off: relay
+    on_turn_off:
+      - switch.turn_off: led
+
+  - platform: gpio
+    pin:
+      number: GPIO12
+      inverted: yes
+    id: led
+    name: "Bedroom Radiator Socket Switch LED"
+    internal: true
+
+light:
+  - platform: status_led
+    pin:
+      number: GPIO4
+      inverted: true
+    name: "Bedroom Radiator Socket Status LED"
+    internal: true
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO05
+    name: "Bedroom Radiator Socket Power Button"
+    entity_category: "diagnostic"
+    on_press:
+      then:
+        - switch.toggle: relay
+    on_click:
+      min_length: 5s
+      max_length: 10s
+      then:
+        - button.press: restart_device
+
+sensor:
+  - platform: cse7766
+    uart_id: power_monitoring
+    voltage:
+      name: "Bedroom Radiator Voltage"
+      icon: mdi:sine-wave
+      unit_of_measurement: "V"
+      device_class: "voltage"
+      state_class: "measurement"
+      filters:
+        - skip_initial: 3
+        - throttle_average: 10s
+        - calibrate_linear:
+          - 0.0 -> 0.0
+          - 122.9 -> 232.6
+    current:
+      name: "Bedroom Radiator Current"
+      icon: mdi:current-ac
+      unit_of_measurement: "A"
+      device_class: "current"
+      state_class: "measurement"
+      filters:
+        - throttle_average: 10s
+    power:
+      name: "Bedroom Radiator Power"
+      icon: mdi:flash-outline
+      unit_of_measurement: "W"
+      device_class: "power"
+      state_class: "measurement"
+      filters:
+        - skip_initial: 3
+        - throttle_average: 10s
+        - calibrate_linear:
+          - 0.0 -> 0.0
+          - 8.8 -> 16.8
+
+#Diagnostic
+  - platform: adc
+    pin: GPIO17
+    name: "Bedroom Radiator Socket Internal Temperature"
+    update_interval: 5min
+    unit_of_measurement: "°C"
+    device_class: "temperature"
+    state_class: "measurement"
+    entity_category: "diagnostic"
+    filters:
+      - calibrate_linear:
+        - 0.15 -> 18.6
+        - 0.16 -> 19.8
+
+  - platform: wifi_signal
+    name: "Bedroom Radiator Socket RSSI"
+    update_interval: 1min
+    unit_of_measurement: "dBm"
+    device_class: "signal_strength"
+    state_class: "measurement"
+    entity_category: "diagnostic"
+
+  - platform: uptime
+    id: uptime_seconds
+    name: "Uptime Seconds"
+    icon: mdi:clock-time-four-outline
+    update_interval: 1min
+    internal: true
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: uptime_sensor
+            state: !lambda |-
+              int seconds = round(id(uptime_seconds).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? to_string(days) + "d " : "") +
+                (hours ? to_string(hours) + "h " : "") +
+                (minutes ? to_string(minutes) + "m " : "") +
+                (to_string(seconds) + "s")
+              ).c_str();
+
+text_sensor:
+  - platform: template
+    id: uptime_sensor
+    name: "Bedroom Radiator Socket Uptime"
+    icon: mdi:clock-time-four-outline
+    entity_category: "diagnostic"
+
+#Configuration
+button:
+  - platform: restart
+    id: restart_device
+    name: "Bedroom Radiator Socket Restart"
