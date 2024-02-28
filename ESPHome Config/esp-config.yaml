@@ -1,6 +1,6 @@
 #ESPHome Core
 esphome:
-  name: bedroom-radiator-socket
+  name: refoss-p11-dzuris-home
   area: Bedroom
 
 esp8266:
@@ -12,48 +12,48 @@ logger:
 
 #WiFi
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  ssid: #SSID or !secret wifi_ssid
+  password: #Password or !secret wifi_password
 
-  manual_ip:
-    static_ip: 192.168.0.151
-    gateway: 192.168.0.1
-    subnet: 255.255.255.0
+  manual_ip: #If you don't want set manual IPs, Delete (manual_ip and below that)
+    static_ip: #Refoss P11 Device IP
+    gateway: #Router IP
+    subnet: #Router Subnet IP
 
   ap:
-    ssid: "Bedroom Radiator Socket DH AP"
-    password: !secret ap_password
+    ssid: "Refoss P11 Dzuriš Home AP"
+    password: #Acess Point password or !secret ap_password
 
 captive_portal:
 
 #Web Server
-web_server:
+web_server: #If you don't want Web Server, Delete (web_server and below that) 
   port: 80
   auth:
-    username: !secret web_server_username
-    password: !secret web_server_password
+    username: #Username or !secret web_server_username
+    password: #Password or !secret web_server_password
 
 #OTA
 ota:
   safe_mode: true
-  password: !secret ota_password
+  password: #Password or !secret ota_password
 
 #MQTT
-mqtt:
-  broker: !secret mqtt_broker_ip_address
-  username: !secret mqtt_broker_username
-  password: !secret mqtt_broker_password
-  client_id: "Bedroom Radiator Socket"
-  discovery: false
-  topic_prefix: "Bedroom Radiator Socket"
+mqtt: #If you don't have or want MQTT Broker, Delete (mqtt and below that)
+  broker: #Broker or !secret mqtt_broker_ip_address
+  username: #Username or !secret mqtt_broker_username
+  password: #Password or !secret mqtt_broker_password
+  client_id: "Refoss P11 Dzuriš Home"
+  discovery: false #If you chnnge to true Home Assistant don't discovery device only from MQTT Integration
+  topic_prefix: "Refoss P11 Dzuriš Home"
 
 #ESPHome API
-api:
+api: #If you don't want ESPHome API, Delete (api and below that)
   encryption:
-    key: !secret api_encryption_key
+    key: #Key or !secret api_encryption_key
 
 #SNTP Time
-time:
+time: #If you want Home Assistant Time change or you stay on SNTP Time change under platform: sntp timezone and server for your Country
   - platform: sntp
     timezone: Europe/Bratislava
     servers:
@@ -73,7 +73,7 @@ switch:
     pin: GPIO13
     restore_mode: ALWAYS_OFF
     id: relay
-    name: "Bedroom Radiator"
+    name: "Refoss P11 Dzuriš Home"
     icon: mdi:radiator
     on_turn_on:
       - switch.turn_on: led
@@ -92,7 +92,7 @@ switch:
       number: GPIO12
       inverted: yes
     id: led
-    name: "Bedroom Radiator Socket Switch LED"
+    name: "Refoss P11 Dzuriš Home Switch LED"
     internal: true
 
 light:
@@ -100,14 +100,14 @@ light:
     pin:
       number: GPIO4
       inverted: true
-    name: "Bedroom Radiator Socket Status LED"
+    name: "Refoss P11 Dzuriš Home Status LED"
     internal: true
 
 binary_sensor:
   - platform: gpio
     pin:
       number: GPIO05
-    name: "Bedroom Radiator Socket Power Button"
+    name: "Refoss P11 Dzuriš Home Power Button"
     entity_category: "diagnostic"
     on_press:
       then:
@@ -122,7 +122,7 @@ sensor:
   - platform: cse7766
     uart_id: power_monitoring
     voltage:
-      name: "Bedroom Radiator Voltage"
+      name: "Refoss P11 Voltage Dzuriš Home"
       icon: mdi:sine-wave
       unit_of_measurement: "V"
       device_class: "voltage"
@@ -134,7 +134,7 @@ sensor:
           - 0.0 -> 0.0
           - 122.9 -> 232.6
     current:
-      name: "Bedroom Radiator Current"
+      name: "Refoss P11 Current Dzuriš Home"
       icon: mdi:current-ac
       unit_of_measurement: "A"
       device_class: "current"
@@ -142,7 +142,7 @@ sensor:
       filters:
         - throttle_average: 10s
     power:
-      name: "Bedroom Radiator Power"
+      name: "Refoss P11 Power Dzuriš Home"
       icon: mdi:flash-outline
       unit_of_measurement: "W"
       device_class: "power"
@@ -157,7 +157,7 @@ sensor:
 #Diagnostic
   - platform: adc
     pin: GPIO17
-    name: "Bedroom Radiator Socket Internal Temperature"
+    name: "Refoss P11 Dzuriš Home Internal Temperature"
     update_interval: 5min
     unit_of_measurement: "°C"
     device_class: "temperature"
@@ -169,7 +169,7 @@ sensor:
         - 0.16 -> 19.8
 
   - platform: wifi_signal
-    name: "Bedroom Radiator Socket RSSI"
+    name: "Refoss P11 Dzuriš Home RSSI"
     update_interval: 1min
     unit_of_measurement: "dBm"
     device_class: "signal_strength"
@@ -204,7 +204,7 @@ sensor:
 text_sensor:
   - platform: template
     id: uptime_sensor
-    name: "Bedroom Radiator Socket Uptime"
+    name: "Refoss P11 Dzuriš Home Uptime"
     icon: mdi:clock-time-four-outline
     entity_category: "diagnostic"
 
@@ -212,4 +212,4 @@ text_sensor:
 button:
   - platform: restart
     id: restart_device
-    name: "Bedroom Radiator Socket Restart"
+    name: "Refoss P11 Dzuriš Home Restart"
