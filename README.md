@@ -41,6 +41,10 @@ uart:
 sensor:
   - platform: cse7766
     uart_id: power_monitoring
+
+sensor:
+  - platform: adc
+    pin: GPIO17
 ```
 
 </br>
