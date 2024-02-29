@@ -29,6 +29,11 @@
 | GPIO13 |          | Relay                |
 | GPIO17 |          | Internal Temperature |
 
+</br>
+
+### ESPHome Config
+- [Refoss P11](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/ESPHome%20Config/Refoss%20P11.yaml)
+
 ```
 logger:
   baud_rate: 0
@@ -49,11 +54,18 @@ sensor:
 
 </br>
 
-### ESPHome Config
-- [Refoss P11](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/ESPHome%20Config/Refoss%20P11.yaml)
-
 ### ESPHome Firmware
 - [Refoss P11](https://github.com/DzurisHome/ESPHome-Refoss-P11/blob/main/ESPHome%20Firmware/Refoss%20P11.bin)
+
+| WiFi AP  |                           |
+|----------|---------------------------|
+| SSID     | Refoss P11 Dzuriš Home AP |
+| Password | dzurishome                |
+
+| Web Server |            |
+|------------|------------|
+| Username   | dzurishome |
+| Password   | dzurishome |
 
 </br>
 
