@@ -31,6 +31,11 @@
 
 </br>
 
+> [!IMPORTANT]
+> First Flash [Tasmota Minimal Firmware](http://ota.tasmota.com/tasmota/release/tasmota-minimal.bin.gz) and then ESPHome Firmware	
+
+</br>
+
 ### ESPHome Config
 - [Refoss P11](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/ESPHome%20Config/Refoss%20P11.yaml)
 
