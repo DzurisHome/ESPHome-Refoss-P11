@@ -50,15 +50,15 @@ sensor:
 </br>
 
 ### ESPHome Config
-- [ESP](https://github.com/DzurisHome/ESPHome-IKEA-VINDRIKTNING/blob/main/ESPHome%20Config/esp-config.yaml)
+- [Refoss P11](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/ESPHome%20Config/Refoss%20P11.yaml)
 
 ### ESPHome Firmware
 - SOON
 
 </br>
 
-![Tasmota Refoss P11](https://github.com/DzurisHome/Tasmota-Template-Refoss-P11/blob/main/Tasmota%20Refoss%20P11.png)
-![Tasmota Refoss P11 Template parameters](https://github.com/DzurisHome/Tasmota-Template-Refoss-P11/blob/main/Tasmota%20Refoss%20P11%20Template%20parameters.png)
+![ESPHome WebServer Bedroom Radiator Socket](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Images/ESPHome%20WebServer%20Bedroom%20Radiator%20Socket.png)
+![Home Assistant ESPHome Integration Bedroom Radiator Socket](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Images/Home%20Assistant%20ESPHome%20Integration%20Bedroom%20Radiator%20Socket.png)
 ![Refoss P11 Plug](https://github.com/DzurisHome/Tasmota-Template-Refoss-P11/blob/main/Refoss%20P11%20Plug.jpg)
 
 ## [LinkTree](https://linktr.ee/DzurisHome)
