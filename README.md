@@ -62,9 +62,6 @@ sensor:
 ### ESPHome Firmware
 - [Refoss P11](https://github.com/DzurisHome/ESPHome-Refoss-P11/blob/main/ESPHome%20Firmware/Refoss%20P11.bin)
 
-> [!IMPORTANT]
-> Before [Factory Reset Device](https://esphome.io/components/button/factory_reset.html?highlight=factory_reset) read this first
-
 | WiFi AP  |                           |
 |----------|---------------------------|
 | SSID     | Refoss P11 Dzuriš Home AP |
@@ -74,6 +71,9 @@ sensor:
 |------------|------------|
 | Username   | dzurishome |
 | Password   | dzurishome |
+
+> [!IMPORTANT]
+> Before [Factory Reset Device](https://esphome.io/components/button/factory_reset.html?highlight=factory_reset) read this first
 
 | Button        |                      |
 |---------------|----------------------|
