@@ -1,4 +1,4 @@
-# ESPHome Config Refoss P11
+# ESPHome Refoss P11
 
 ## [LinkTree](https://linktr.ee/DzurisHome)
 
@@ -20,14 +20,14 @@
 
 </br>
 
-| Pin    |                |                      |
-| ------ | -------------- | ---------------------|
-| GPIO3  |                | Power Monitoring     |
-| GPIO4  | inverted: true | Status Led           |
-| GPIO5  |                | Button               |
-| GPIO12 | inverted: true | Switch Led           |
-| GPIO13 |                | Relay                |
-| GPIO17 |                | Internal Temperature |
+| Pin    | Inverted |                      |
+| ------ | -------- | ---------------------|
+| GPIO3  |          | Power Monitoring     |
+| GPIO4  | true     | Status Led           |
+| GPIO5  |          | Button               |
+| GPIO12 | true     | Switch Led           |
+| GPIO13 |          | Relay                |
+| GPIO17 |          | Internal Temperature |
 
 ```
 logger:
@@ -59,7 +59,7 @@ sensor:
 
 ![ESPHome WebServer Bedroom Radiator Socket](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Images/ESPHome%20WebServer%20Bedroom%20Radiator%20Socket.png)
 ![Home Assistant ESPHome Integration Bedroom Radiator Socket](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Images/Home%20Assistant%20ESPHome%20Integration%20Bedroom%20Radiator%20Socket.png)
-![Refoss P11 Plug](https://github.com/DzurisHome/Tasmota-Template-Refoss-P11/blob/main/Refoss%20P11%20Plug.jpg)
+![Refoss P11](https://github.com/DzurisHome/ESPHome-Config-Refoss-P11/blob/main/Images/Refoss%20P11.png)
 
 ## [LinkTree](https://linktr.ee/DzurisHome)
 
