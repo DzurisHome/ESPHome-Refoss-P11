@@ -6,7 +6,7 @@
 
 </br>
 
-*****[Refoss P11 | Aliexpress](https://s.click.aliexpress.com/e/_mPJhNKY)*****
+*****[Aliexpress | Refoss P11](https://s.click.aliexpress.com/e/_mPJhNKY)*****
 
 *****[Manufacturer | Refoss P11](https://refoss.net/products/refoss-tesmota-wi-fi-plug-p11)*****
 
@@ -71,6 +71,14 @@ sensor:
 |------------|------------|
 | Username   | dzurishome |
 | Password   | dzurishome |
+
+| Button        |                      |
+|---------------|----------------------|
+| 5-10 seconds  | Restart Device       |
+| 15-20 seconds | Factory Reset Device |
+
+> [!IMPORTANT]
+> Before [Factory Reset Device](https://esphome.io/components/button/factory_reset.html?highlight=factory_reset) read this first
 
 </br>
 
