@@ -1,7 +1,6 @@
 #ESPHome Core
 esphome:
   name: refoss-p11-dzuris-home
-  area: Bedroom
 
 esp8266:
   board: esp01_1m
@@ -53,7 +52,7 @@ api: #If you don't want ESPHome API, Delete (api and below that)
     key: #Key or !secret api_encryption_key
 
 #SNTP Time
-time: #If you want Home Assistant Time change or you stay on SNTP Time change under platform: sntp timezone and server for your Country
+time: #If you want to change the time on Home Assistant change it or stay on SNTP but you need change timezone and SNTP server for your Country
   - platform: sntp
     timezone: Europe/Bratislava
     servers:
@@ -74,16 +73,9 @@ switch:
     restore_mode: ALWAYS_OFF
     id: relay
     name: "Refoss P11 Dzuriš Home"
-    icon: mdi:radiator
+    icon: mdi:power-socket-fr
     on_turn_on:
       - switch.turn_on: led
-      #Automation
-      - delay: 3hours
-      - if:
-          condition:
-            - switch.is_on: relay
-          then:
-            - switch.turn_off: relay
     on_turn_off:
       - switch.turn_off: led
 
@@ -122,7 +114,7 @@ sensor:
   - platform: cse7766
     uart_id: power_monitoring
     voltage:
-      name: "Refoss P11 Voltage Dzuriš Home"
+      name: "Refoss P11 Dzuriš Home Voltage"
       icon: mdi:sine-wave
       unit_of_measurement: "V"
       device_class: "voltage"
@@ -134,7 +126,7 @@ sensor:
           - 0.0 -> 0.0
           - 122.9 -> 232.6
     current:
-      name: "Refoss P11 Current Dzuriš Home"
+      name: "Refoss P11 Dzuriš Home Current"
       icon: mdi:current-ac
       unit_of_measurement: "A"
       device_class: "current"
@@ -142,7 +134,7 @@ sensor:
       filters:
         - throttle_average: 10s
     power:
-      name: "Refoss P11 Power Dzuriš Home"
+      name: "Refoss P11 Dzuriš Home Power"
       icon: mdi:flash-outline
       unit_of_measurement: "W"
       device_class: "power"
