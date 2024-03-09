@@ -72,7 +72,7 @@ sensor:
 | Username   | dzurishome |
 | Password   | dzurishome |
 
-> [!IMPORTANT]
+> [!CAUTION]
 > Before [Factory Reset Device](https://esphome.io/components/button/factory_reset.html?highlight=factory_reset) read this first
 
 | Button        |                      |
