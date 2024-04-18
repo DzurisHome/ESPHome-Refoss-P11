@@ -32,7 +32,7 @@
 </br>
 
 > [!IMPORTANT]
-> First Flash [Tasmota Minimal Firmware](http://ota.tasmota.com/tasmota/release/tasmota-minimal.bin.gz) and then ESPHome Firmware	
+> First Flash [Tasmota Minimal Firmware](http://ota.tasmota.com/tasmota/release/tasmota-minimal.bin.gz) and then ESPHome Minimal Firmware	
 
 </br>
 
