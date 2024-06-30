@@ -34,7 +34,7 @@
 > [!IMPORTANT]
 > [Read this First before Flashing](https://github.com/DzurisHome/ESPHome-Refoss-P11/issues/1)
 > 
-> First Flash [Tasmota Minimal Firmware](http://ota.tasmota.com/tasmota/release/tasmota-minimal.bin.gz) and then [ESPHome Minimal Config](https://github.com/DzurisHome/ESPHome-Refoss-P11/blob/main/ESPHome%20Config/Refoss%20P11%20Minimal.yaml)
+> First Flash [Tasmota Minimal Firmware](https://ota.tasmota.com/tasmota/release/) or over [webUI](https://tasmota.github.io/docs/Upgrading/#upgrade-using-webui) and then [ESPHome Minimal Config](https://github.com/DzurisHome/ESPHome-Refoss-P11/blob/main/ESPHome%20Config/Refoss%20P11%20Minimal.yaml)
 
 </br>
 
