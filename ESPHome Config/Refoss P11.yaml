@@ -9,6 +9,10 @@ esp8266:
 logger:
   baud_rate: 0
 
+#Safe Mode
+safe_mode:
+  boot_is_good_after: 1min
+
 #WiFi
 wifi:
   ssid: #SSID or !secret wifi_ssid
@@ -25,31 +29,10 @@ wifi:
 
 captive_portal:
 
-#Web Server
-web_server: #If you don't want Web Server, Delete (web_server and below that) 
-  port: 80
-  auth:
-    username: #Username or !secret web_server_username
-    password: #Password or !secret web_server_password
-
 #OTA
 ota:
-  safe_mode: true
-  password: #Password or !secret ota_password
-
-#MQTT
-mqtt: #If you don't have or want MQTT Broker, Delete (mqtt and below that)
-  broker: #Broker or !secret mqtt_broker_ip_address
-  username: #Username or !secret mqtt_broker_username
-  password: #Password or !secret mqtt_broker_password
-  client_id: "Refoss P11 Dzuriš Home"
-  discovery: false #If you chnnge to true Home Assistant don't discovery device only from MQTT Integration
-  topic_prefix: "Refoss P11 Dzuriš Home"
-
-#ESPHome API
-api: #If you don't want ESPHome API, Delete (api and below that)
-  encryption:
-    key: #Key or !secret api_encryption_key
+  - platform: esphome
+    password: #Password or !secret ota_password
 
 #SNTP Time
 time: #If you want to change the time on Home Assistant change it or stay on SNTP but you need change timezone and SNTP server for your Country
@@ -59,6 +42,27 @@ time: #If you want to change the time on Home Assistant change it or stay on SNT
      - 1.sk.pool.ntp.org
      - 0.europe.pool.ntp.org
      - 1.europe.pool.ntp.org
+
+#Web Server
+web_server: #If you don't want Web Server, Delete (web_server and below that) 
+  port: 80
+  auth:
+    username: #Username or !secret web_server_username
+    password: #Password or !secret web_server_password
+
+#ESPHome API
+api: #If you don't want ESPHome API, Delete (api and below that)
+  encryption:
+    key: #Key or !secret api_encryption_key
+
+#MQTT
+mqtt: #If you don't have or want MQTT Broker, Delete (mqtt and below that)
+  broker: #Broker or !secret mqtt_broker_ip_address
+  username: #Username or !secret mqtt_broker_username
+  password: #Password or !secret mqtt_broker_password
+  client_id: "Refoss P11 Dzuriš Home"
+  discovery: false #If you chnnge to true Home Assistant don't discovery device only from MQTT Integration
+  topic_prefix: "Refoss P11 Dzuriš Home"
 
 #Device Required
 uart:
