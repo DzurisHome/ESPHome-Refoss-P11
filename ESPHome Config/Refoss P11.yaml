@@ -1,6 +1,10 @@
 #ESPHome Core
 esphome:
-  name: refoss-p11-dzuris-home
+  name: refoss-p11
+  name_add_mac_suffix: true
+  project: 
+    name: "Dzuriš Home.Refoss P11"
+    version: "Dzuriš Home ESPHome"
 
 esp8266:
   board: esp01_1m
@@ -18,12 +22,10 @@ safe_mode:
 wifi:
   ssid: #SSID or !secret wifi_ssid
   password: #Password or !secret wifi_password
-
   manual_ip: #If you don't want set manual IPs, Delete (manual_ip and below that)
     static_ip: #Refoss P11 Device IP
     gateway: #Router IP
     subnet: #Router Subnet IP
-
   ap:
     ssid: "Refoss P11 Dzuriš Home AP"
     password: #Acess Point password or !secret ap_password
@@ -65,9 +67,9 @@ mqtt: #If you don't have or want MQTT Broker, Delete (mqtt and below that)
   broker: #Broker or !secret mqtt_broker_ip_address
   username: #Username or !secret mqtt_broker_username
   password: #Password or !secret mqtt_broker_password
-  client_id: "Refoss P11 Dzuriš Home"
+  client_id: "Refoss P11"
+  topic_prefix: "Refoss P11"
   discovery: false #If you chnnge to true Home Assistant don't discovery device only from MQTT Integration
-  topic_prefix: "Refoss P11 Dzuriš Home"
 
 #Device Required
 uart:
@@ -81,7 +83,7 @@ switch:
     pin: GPIO13
     restore_mode: ALWAYS_OFF
     id: relay
-    name: "Refoss P11 Dzuriš Home"
+    name: "Refoss P11"
     icon: mdi:power-socket-fr
     on_turn_on:
       - switch.turn_on: led
@@ -93,7 +95,7 @@ switch:
       number: GPIO12
       inverted: yes
     id: led
-    name: "Refoss P11 Dzuriš Home Switch LED"
+    name: "Refoss P11 Switch LED"
     internal: true
 
 light:
@@ -101,14 +103,14 @@ light:
     pin:
       number: GPIO4
       inverted: true
-    name: "Refoss P11 Dzuriš Home Status LED"
+    name: "Refoss P11 Status LED"
     internal: true
 
 binary_sensor:
   - platform: gpio
     pin:
       number: GPIO05
-    name: "Refoss P11 Dzuriš Home Power Button"
+    name: "Refoss P11 Power Button"
     entity_category: "diagnostic"
     on_press:
       then:
@@ -123,42 +125,52 @@ sensor:
   - platform: cse7766
     uart_id: power_monitoring
     voltage:
-      name: "Refoss P11 Dzuriš Home Voltage"
+      filters:
+        - calibrate_linear:
+          - 0.0 -> 0.0
+          - 122.9 -> 232.6
+        - throttle_average: 30s
+      name: "Refoss P11 Voltage"
       icon: mdi:sine-wave
       unit_of_measurement: "V"
       device_class: "voltage"
       state_class: "measurement"
-      filters:
-        - skip_initial: 3
-        - throttle_average: 10s
-        - calibrate_linear:
-          - 0.0 -> 0.0
-          - 122.9 -> 232.6
     current:
-      name: "Refoss P11 Dzuriš Home Current"
+      filters:
+        - throttle_average: 10
+      name: "Refoss P11 Current"
       icon: mdi:current-ac
       unit_of_measurement: "A"
       device_class: "current"
       state_class: "measurement"
-      filters:
-        - throttle_average: 10s
+      #Overload Protection
+      on_value:
+        then:
+          - if:
+              condition:
+                lambda: |-
+                  if (id(overload_protection).state == "10 A" && x > 10.0) return true;
+                  if (id(overload_protection).state == "15 A" && x > 15.0) return true;
+                  return false;
+              then:
+                - switch.turn_off: relay
+                - logger.log: "Overload Protection | Socket OFF"
     power:
-      name: "Refoss P11 Dzuriš Home Power"
+      filters:
+        - calibrate_linear:
+          - 0.0 -> 0.0
+          - 8.8 -> 16.8
+        - throttle_average: 10s
+      name: "Refoss P11 Power"
       icon: mdi:flash-outline
       unit_of_measurement: "W"
       device_class: "power"
       state_class: "measurement"
-      filters:
-        - skip_initial: 3
-        - throttle_average: 10s
-        - calibrate_linear:
-          - 0.0 -> 0.0
-          - 8.8 -> 16.8
 
 #Diagnostic
   - platform: adc
     pin: GPIO17
-    name: "Refoss P11 Dzuriš Home Internal Temperature"
+    name: "Refoss P11 Internal Temperature"
     update_interval: 5min
     unit_of_measurement: "°C"
     device_class: "temperature"
@@ -170,7 +182,7 @@ sensor:
         - 0.16 -> 19.8
 
   - platform: wifi_signal
-    name: "Refoss P11 Dzuriš Home RSSI"
+    name: "Refoss P11 RSSI"
     update_interval: 1min
     unit_of_measurement: "dBm"
     device_class: "signal_strength"
@@ -178,39 +190,29 @@ sensor:
     entity_category: "diagnostic"
 
   - platform: uptime
-    id: uptime_seconds
-    name: "Uptime Seconds"
+    type: timestamp
+    name: "Refoss P11 Uptime"
     icon: mdi:clock-time-four-outline
-    update_interval: 1min
-    internal: true
-    on_raw_value:
-      then:
-        - text_sensor.template.publish:
-            id: uptime_sensor
-            state: !lambda |-
-              int seconds = round(id(uptime_seconds).raw_state);
-              int days = seconds / (24 * 3600);
-              seconds = seconds % (24 * 3600);
-              int hours = seconds / 3600;
-              seconds = seconds % 3600;
-              int minutes = seconds /  60;
-              seconds = seconds % 60;
-              return (
-                (days ? to_string(days) + "d " : "") +
-                (hours ? to_string(hours) + "h " : "") +
-                (minutes ? to_string(minutes) + "m " : "") +
-                (to_string(seconds) + "s")
-              ).c_str();
-
-text_sensor:
-  - platform: template
-    id: uptime_sensor
-    name: "Refoss P11 Dzuriš Home Uptime"
-    icon: mdi:clock-time-four-outline
+    device_class: "timestamp"
     entity_category: "diagnostic"
 
 #Configuration
+select:
+  - platform: template
+    restore_value: true
+    optimistic: true
+    options:
+      - "Off"
+      - "10 A"
+      - "15 A"
+    initial_option: "10 A"
+    update_interval: 1s
+    id: overload_protection
+    name: "Refoss P11 Overload Protection"
+    icon: mdi:sync-alert
+    entity_category: "config"
+
 button:
   - platform: restart
     id: restart_device
-    name: "Refoss P11 Dzuriš Home Restart"
+    name: "Refoss P11 Restart"
