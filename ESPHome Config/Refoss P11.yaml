@@ -166,24 +166,43 @@ sensor:
       unit_of_measurement: "W"
       device_class: "power"
       state_class: "measurement"
+      #Overload Fuse
+      on_value_range: #If you don't have Overload Fuse, Delete (on_value_range and below that)
+        - above: 3000
+          then:
+            - switch.turn_off: relay
+            - logger.log: "Overload Fuse | Socket turned OFF"
 
 #Diagnostic
   - platform: adc
     pin: GPIO17
-    name: "Refoss P11 Internal Temperature"
     update_interval: 5min
-    unit_of_measurement: "°C"
-    device_class: "temperature"
-    state_class: "measurement"
-    entity_category: "diagnostic"
     filters:
       - calibrate_linear:
         - 0.15 -> 18.6
         - 0.16 -> 19.8
+    name: "Refoss P11 Internal Temperature"
+    unit_of_measurement: "°C"
+    device_class: "temperature"
+    state_class: "measurement"
+    entity_category: "diagnostic"
+    #Overheat Protection
+    on_value:
+      then:
+        - if:
+            condition:
+              lambda: |-
+                if (id(overheat_protection).state == "50 °C" && x > 50.0) return true;
+                if (id(overheat_protection).state == "60 °C" && x > 60.0) return true;
+                if (id(overheat_protection).state == "70 °C" && x > 70.0) return true;
+                return false;
+            then:
+              - switch.turn_off: relay
+              - logger.log: "Overheat Protection | Socket turned OFF"
 
   - platform: wifi_signal
-    name: "Refoss P11 RSSI"
     update_interval: 1min
+    name: "Refoss P11 RSSI"
     unit_of_measurement: "dBm"
     device_class: "signal_strength"
     state_class: "measurement"
@@ -210,6 +229,21 @@ select:
     id: overload_protection
     name: "Refoss P11 Overload Protection"
     icon: mdi:sync-alert
+    entity_category: "config"
+
+  - platform: template
+    restore_value: true
+    optimistic: true
+    options:
+      - "Off"
+      - "50 °C"
+      - "60 °C"
+      - "70 °C"
+    initial_option: "70 °C"
+    update_interval: 1s
+    id: overheat_protection
+    name: "Refoss P11 Overheat Protection"
+    icon: mdi:thermometer-alert
     entity_category: "config"
 
 button:
