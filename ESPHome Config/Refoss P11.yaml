@@ -190,7 +190,7 @@ sensor:
       accuracy_decimals: 2
       #Overload Fuse
       on_value_range: #If you don't have Overload Fuse, Delete (on_value_range and below that)
-        - above: 3000
+        - above: 3400
           then:
             - switch.turn_off: relay
             - logger.log: "Overload Fuse | Socket OFF"
