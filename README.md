@@ -27,7 +27,7 @@
 | GPIO5  |          | Button               |
 | GPIO12 | true     | Switch Led           |
 | GPIO13 |          | Relay                |
-| GPIO17 |          | Internal Temperature |
+| GPIO17 |          | adc                  |
 
 </br>
 
@@ -56,22 +56,14 @@ sensor:
 sensor:
   - platform: adc
     pin: GPIO17
+    samples: 1
+    sampling_mode: avg
 ```
 
 </br>
 
 ### ESPHome Firmware
 - [Refoss P11](https://github.com/DzurisHome/ESPHome-Refoss-P11/blob/main/ESPHome%20Firmware/Refoss%20P11.bin)
-
-| WiFi AP  |                           |
-|----------|---------------------------|
-| SSID     | Refoss P11 Dzuriš Home AP |
-| Password | dzurishome                |
-
-| Web Server |            |
-|------------|------------|
-| Username   | dzurishome |
-| Password   | dzurishome |
 
 > [!CAUTION]
 > Before [Factory Reset Device](https://esphome.io/components/button/factory_reset.html?highlight=factory_reset) read this first

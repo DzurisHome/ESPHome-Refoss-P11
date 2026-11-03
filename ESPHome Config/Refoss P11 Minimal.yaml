@@ -1,13 +1,20 @@
+#ESPHome Core
 esphome:
-  name: refoss-p11-dzuris-home
+  name: refoss-p11
+  area: Bedroom #Change to your Room
   name_add_mac_suffix: true
   project: 
     name: "Dzuriš Home.Refoss P11"
     version: "Dzuriš Home ESPHome"
+
 esp8266:
   board: esp01_1m
+
+#Logger
 logger:
   baud_rate: 0
+
+#WiFi
 wifi:
   ssid: #SSID or !secret wifi_ssid
   password: #Password or !secret wifi_password
@@ -18,7 +25,11 @@ wifi:
   ap:
     ssid: "Refoss P11 Dzuriš Home AP"
     password: #Acess Point password or !secret ap_password
+
+#WiFi Hotspot
 captive_portal:
+
+#OTA
 ota:
   - platform: esphome
     password: #Password or !secret ota_password
