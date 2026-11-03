@@ -1,0 +1,2 @@
+#ESPHome Firmware — varovania, ktoré sa ignorujú
+#Jeden riadok = časť textu varovania. Riadky s # sa preskočia.

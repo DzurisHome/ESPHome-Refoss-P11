@@ -1,0 +1,312 @@
+#ESPHome Firmware
+#Nový firmware + webová stránka s tlačidlom Install. Spustí sa:
+#- po Merge PR alebo tvojom commite do main (zmena v ESPHome Config)
+#- keď vyjde nová verzia ESPHome (spustí ho .github/workflows/esphome-release.yml)
+#- ručne (Run workflow)
+#
+#Najprv ESPHome Validate. Pri CHYBE sa firmware nerobí, na stránke ostane starý
+#a otvorí sa Issue s textom chyby (zamknuté, verejnosť nemôže komentovať).
+#Varovania build nezastavia: firmware sa zverejní a varovania prídu v samostatnom Issue.
+#Po úspešnom builde sa Issue s chybou samo zavrie, Issue s varovaniami keď varovania zmiznú.
+#Verejné YAML sa nemenia; firmware sa robí z dočasnej kópie (.github/esphome-firmware/firmware.py)
+name: ESPHome Firmware
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ESPHome Config/**"
+      - ".github/esphome-firmware/**"
+      - ".github/workflows/esphome-firmware.yml"
+  #Ručne alebo z ESPHome Release
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: esphome-firmware
+  cancel-in-progress: false
+
+env:
+  CONFIG_DIR: ESPHome Config
+  SITE_TITLE: Dzuriš Home Refoss P11 Firmware
+  REVIEWER: milandzuris
+  ISSUE_LABEL: ESPHome Firmware
+  WARNING_LABEL: ESPHome Firmware Warnings
+
+jobs:
+  #Najnovšia verzia ESPHome (rovnaká pre Validate aj Build)
+  check:
+    name: ESPHome Version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: ESPHome Version
+        id: version
+        run: |
+          latest="$(curl --fail --silent --show-error https://pypi.org/pypi/esphome/json | jq -r '.info.version')"
+          echo "version=${latest}" >> "${GITHUB_OUTPUT}"
+          echo "ESPHome: ${latest}"
+
+  #Kópie pre firmware + Validate
+  prepare:
+    name: ESPHome Validate
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      boards: ${{ steps.prepare.outputs.boards }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+
+      - name: Python Packages
+        env:
+          ESPHOME_VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          python -m pip install --quiet \
+            --requirement .github/esphome-firmware/requirements.txt \
+            "esphome==${ESPHOME_VERSION}"
+
+      - name: ESPHome Prepare
+        id: prepare
+        run: |
+          python .github/esphome-firmware/firmware.py prepare \
+            --config-dir "${CONFIG_DIR}" \
+            --out build \
+            --matrix "${RUNNER_TEMP}/boards.json"
+          echo "boards=$(cat "${RUNNER_TEMP}/boards.json")" >> "${GITHUB_OUTPUT}"
+
+      - name: ESPHome Validate
+        id: validate
+        env:
+          ESPHOME_VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          python .github/esphome-firmware/firmware.py validate \
+            --build build \
+            --ignore .github/esphome-firmware/ignore-warnings.txt \
+            --esphome-version "${ESPHOME_VERSION}" \
+            --report report.md \
+            --status status.txt
+          cat report.md >> "${GITHUB_STEP_SUMMARY}"
+
+      #Report pre Issue (aj pri chybe)
+      - name: Upload Report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: esphome-report
+          path: |
+            report.md
+            status.txt
+          if-no-files-found: ignore
+          retention-days: 7
+
+      #Chyba = stop, firmware sa nerobí
+      - name: ESPHome Validate Result
+        run: |
+          if [ "$(cat status.txt)" = "errors" ]; then
+            echo "::error::ESPHome Validate failed. Firmware was not built, the previous firmware stays online."
+            exit 1
+          fi
+
+      - name: Upload Build Configs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: esphome-build
+          path: build
+          retention-days: 1
+
+  #Kompilácia (každá doska zvlášť, paralelne)
+  build:
+    name: ESPHome Build (${{ matrix.board }})
+    needs:
+      - check
+      - prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        board: ${{ fromJSON(needs.prepare.outputs.boards) }}
+    steps:
+      - name: Download Build Configs
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: esphome-build
+          path: build
+
+      - name: ESPHome Compile
+        id: esphome
+        uses: esphome/build-action@ae5408cdbc4f70692bf8e345c4982bca05a93667 # v8.1.0
+        with:
+          yaml-file: build/${{ matrix.board }}.yaml
+          version: ${{ needs.check.outputs.version }}
+          complete-manifest: true
+
+      - name: ESPHome Firmware Collect
+        env:
+          OUT_NAME: ${{ steps.esphome.outputs.name }}
+          BOARD: ${{ matrix.board }}
+        run: |
+          mkdir -p firmware
+          mv "${OUT_NAME}" "firmware/${BOARD}"
+          ls -la "firmware/${BOARD}"
+
+      - name: Upload Firmware
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: esphome-firmware-${{ matrix.board }}
+          path: firmware
+          retention-days: 7
+
+  #Webová stránka (iba keď sa podarili VŠETKY dosky)
+  publish:
+    name: ESPHome Publish
+    needs:
+      - check
+      - build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github/esphome-firmware
+          persist-credentials: false
+
+      - name: Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+
+      - name: Python Packages
+        run: python -m pip install --quiet --requirement .github/esphome-firmware/requirements.txt
+
+      - name: Download Build Configs
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: esphome-build
+          path: build
+
+      - name: Download Firmware
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: esphome-firmware-*
+          path: site/firmware
+          merge-multiple: true
+
+      - name: GitHub Pages Website
+        env:
+          YAML_URL: ${{ github.server_url }}/${{ github.repository }}/tree/main/ESPHome%20Config
+          ESPHOME_VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          python .github/esphome-firmware/firmware.py site \
+            --boards build/boards.json \
+            --site site \
+            --title "${SITE_TITLE}" \
+            --yaml-url "${YAML_URL}" \
+            --esphome-version "${ESPHOME_VERSION}"
+
+      - name: GitHub Pages Configure
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: GitHub Pages Upload
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+
+      - name: GitHub Pages Deploy
+        id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  #Issue pri probléme / zavretie po úspechu
+  report:
+    name: ESPHome Report
+    needs:
+      - check
+      - prepare
+      - build
+      - publish
+    if: always() && needs.check.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github/shared
+          persist-credentials: false
+
+      - name: Download Report
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: esphome-report
+          path: report
+
+      - name: GitHub Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREPARE: ${{ needs.prepare.result }}
+          BUILD: ${{ needs.build.result }}
+          PUBLISH: ${{ needs.publish.result }}
+          ESPHOME_VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          if [ "${PREPARE}" = "success" ] && [ "${BUILD}" = "success" ] && [ "${PUBLISH}" = "success" ]; then
+            bash .github/shared/report-issue.sh "${ISSUE_LABEL}" "" ok
+            #Firmware zverejnený, varovania iba nahlásiť
+            if [ "$(cat report/status.txt 2> /dev/null)" = "warnings" ]; then
+              {
+                echo "**ESPHome Firmware was built and published, but ESPHome reported warnings.**"
+                echo
+                cat report/report.md
+              } > "${RUNNER_TEMP}/warnings.md"
+              bash .github/shared/report-issue.sh "${WARNING_LABEL}" "ESPHome Firmware: Warnings" problem "${RUNNER_TEMP}/warnings.md"
+            else
+              bash .github/shared/report-issue.sh "${WARNING_LABEL}" "" ok
+            fi
+            exit 0
+          fi
+          {
+            if [ "${PREPARE}" = "failure" ] && [ -f report/report.md ]; then
+              echo "**ESPHome Firmware was not built: ESPHome Validate failed.** The previous firmware stays online."
+              echo
+              cat report/report.md
+            elif [ "${PREPARE}" != "success" ]; then
+              echo "**ESPHome Firmware was not built: ESPHome Validate could not run.** The previous firmware stays online."
+            elif [ "${BUILD}" != "success" ]; then
+              echo "**ESPHome Firmware was not built: ESPHome Compile failed** (ESPHome \`${ESPHOME_VERSION}\`). The previous firmware stays online."
+            else
+              echo "**ESPHome Firmware was built, but the website could not be published.** The previous firmware stays online."
+            fi
+            echo
+            echo "Run: ${run_url}"
+          } > "${RUNNER_TEMP}/issue.md"
+          bash .github/shared/report-issue.sh "${ISSUE_LABEL}" "ESPHome Firmware: Not Built" problem "${RUNNER_TEMP}/issue.md"
