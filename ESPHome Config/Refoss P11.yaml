@@ -140,7 +140,7 @@ sensor:
   - platform: cse7766
     voltage:
       filters:
-        - multiply: 1.8955 #Calibrate for your device with a reference mete
+        - multiply: 1.8955 #Calibrate for your device with a reference meter
         - throttle_average: 30s #Update interval, you can change it
       name: "Refoss P11 Voltage"
       icon: mdi:sine-wave
@@ -150,7 +150,7 @@ sensor:
       accuracy_decimals: 1
     current:
       filters:
-        - multiply: 0.9723 #Calibrate for your device with a reference mete
+        - multiply: 0.9723 #Calibrate for your device with a reference meter
         - lambda: |-
             if (fabs(x) < 1e-10) return 0.0;
             return x;
@@ -177,7 +177,7 @@ sensor:
                 - logger.log: "Overload Protection | Socket OFF"
     power:
       filters:
-        - multiply: 1.8430 #Calibrate for your device with a reference mete
+        - multiply: 1.8430 #Calibrate for your device with a reference meter
         - lambda: |-
             if (fabs(x) < 0.01) return 0.0;
             return x;
@@ -189,7 +189,7 @@ sensor:
       state_class: "measurement"
       accuracy_decimals: 2
       #Overload Fuse
-      on_value_range: #If you don't have Overload Fuse, Delete (on_value_range and below that)
+      on_value_range: #If you don't want Overload Fuse, Delete (on_value_range and below that)
         - above: 3400
           then:
             - switch.turn_off: relay
