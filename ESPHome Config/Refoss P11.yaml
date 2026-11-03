@@ -1,10 +1,22 @@
 #ESPHome Core
 esphome:
   name: refoss-p11
+  area: Bedroom #Change to your Room
   name_add_mac_suffix: true
   project: 
     name: "Dzuriš Home.Refoss P11"
     version: "Dzuriš Home ESPHome"
+  #System
+  on_boot:
+    priority: 798
+    then:
+      - if:
+          condition:
+            switch.is_on: relay
+          then:
+            - switch.turn_on: led
+          else:
+            - switch.turn_off: led
 
 esp8266:
   board: esp01_1m
@@ -126,9 +138,7 @@ sensor:
     uart_id: power_monitoring
     voltage:
       filters:
-        - calibrate_linear:
-          - 0.0 -> 0.0
-          - 122.9 -> 232.6
+        - multiply: 1.8955
         - throttle_average: 30s
       name: "Refoss P11 Voltage"
       icon: mdi:sine-wave
@@ -137,7 +147,11 @@ sensor:
       state_class: "measurement"
     current:
       filters:
-        - throttle_average: 10
+        - multiply: 0.9723
+        - lambda: |-
+            if (fabs(x) < 1e-10) return 0.0;
+            return x;
+        - throttle_average: 10s
       name: "Refoss P11 Current"
       icon: mdi:current-ac
       unit_of_measurement: "A"
@@ -149,17 +163,20 @@ sensor:
           - if:
               condition:
                 lambda: |-
-                  if (id(overload_protection).state == "10 A" && x > 10.0) return true;
-                  if (id(overload_protection).state == "15 A" && x > 15.0) return true;
+                  if (id(overload_protection).current_option() == "5 A" && x > 5.0) return true;
+                  if (id(overload_protection).current_option() == "10 A" && x > 10.0) return true;
+                  if (id(overload_protection).current_option() == "13 A" && x > 13.0) return true;
+                  if (id(overload_protection).current_option() == "15 A" && x > 15.0) return true;
                   return false;
               then:
                 - switch.turn_off: relay
                 - logger.log: "Overload Protection | Socket OFF"
     power:
       filters:
-        - calibrate_linear:
-          - 0.0 -> 0.0
-          - 8.8 -> 16.8
+        - multiply: 1.8430
+        - lambda: |-
+            if (fabs(x) < 0.01) return 0.0;
+            return x;
         - throttle_average: 10s
       name: "Refoss P11 Power"
       icon: mdi:flash-outline
@@ -168,19 +185,43 @@ sensor:
       state_class: "measurement"
       #Overload Fuse
       on_value_range: #If you don't have Overload Fuse, Delete (on_value_range and below that)
-        - above: 3000
+        - above: 3400
           then:
             - switch.turn_off: relay
             - logger.log: "Overload Fuse | Socket turned OFF"
 
-#Diagnostic
+#Device Required
   - platform: adc
     pin: GPIO17
-    update_interval: 5min
+    samples: 1
+    sampling_mode: avg
+    update_interval: 10s
+    id: ntc_adc
     filters:
-      - calibrate_linear:
-        - 0.15 -> 18.6
-        - 0.16 -> 19.8
+      - sliding_window_moving_average:
+          window_size: 6
+          send_every: 6
+
+  - platform: resistance
+    sensor: ntc_adc
+    configuration: UPSTREAM
+    resistor: 4kOhm
+    reference_voltage: 3.3V
+    id: ntc_resistance
+    name: "Refoss P11 Socket NTC Resistance"
+    icon: mdi:omega
+    unit_of_measurement: "Ω"
+    state_class: "measurement"
+    entity_category: diagnostic
+    internal: true
+
+#Diagnostic
+  - platform: ntc
+    sensor: ntc_resistance
+    calibration:
+      b_constant: 4250
+      reference_temperature: 25°C
+      reference_resistance: 80kOhm
     name: "Refoss P11 Internal Temperature"
     unit_of_measurement: "°C"
     device_class: "temperature"
@@ -192,13 +233,15 @@ sensor:
         - if:
             condition:
               lambda: |-
-                if (id(overheat_protection).state == "50 °C" && x > 50.0) return true;
-                if (id(overheat_protection).state == "60 °C" && x > 60.0) return true;
-                if (id(overheat_protection).state == "70 °C" && x > 70.0) return true;
+                if (id(overheat_protection).current_option() == "30 °C" && x > 30.0) return true;
+                if (id(overheat_protection).current_option() == "40 °C" && x > 40.0) return true;
+                if (id(overheat_protection).current_option() == "50 °C" && x > 50.0) return true;
+                if (id(overheat_protection).current_option() == "60 °C" && x > 60.0) return true;
+                if (id(overheat_protection).current_option() == "70 °C" && x > 70.0) return true;
                 return false;
             then:
               - switch.turn_off: relay
-              - logger.log: "Overheat Protection | Socket turned OFF"
+              - logger.log: "Overheat Protection | Socket OFF"
 
   - platform: wifi_signal
     update_interval: 1min
@@ -222,7 +265,9 @@ select:
     optimistic: true
     options:
       - "Off"
+      - "5 A"
       - "10 A"
+      - "13 A"
       - "15 A"
     initial_option: "10 A"
     update_interval: 1s
@@ -236,6 +281,8 @@ select:
     optimistic: true
     options:
       - "Off"
+      - "30 °C"
+      - "40 °C"
       - "50 °C"
       - "60 °C"
       - "70 °C"
