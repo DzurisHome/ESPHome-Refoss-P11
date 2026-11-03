@@ -63,6 +63,7 @@ time: #If you want to change the time on Home Assistant change it or stay on SNT
 web_server: #If you don't want Web Server, Delete (web_server and below that) 
   port: 80
   auth:
+    type: digest
     username: #Username or !secret web_server_username
     password: #Password or !secret web_server_password
   include_internal: false
@@ -138,8 +139,8 @@ sensor:
     uart_id: power_monitoring
     voltage:
       filters:
-        - multiply: 1.8955
-        - throttle_average: 30s
+        - multiply: 1.8955 #Calibrate for your device with a reference mete
+        - throttle_average: 30s #Update interval, you can change it
       name: "Refoss P11 Voltage"
       icon: mdi:sine-wave
       unit_of_measurement: "V"
@@ -147,18 +148,18 @@ sensor:
       state_class: "measurement"
     current:
       filters:
-        - multiply: 0.9723
+        - multiply: 0.9723 #Calibrate for your device with a reference mete
         - lambda: |-
             if (fabs(x) < 1e-10) return 0.0;
             return x;
-        - throttle_average: 10s
+        - throttle_average: 10s #Update interval, you can change it
       name: "Refoss P11 Current"
       icon: mdi:current-ac
       unit_of_measurement: "A"
       device_class: "current"
       state_class: "measurement"
       #Overload Protection
-      on_value:
+      on_value: #If you don't want Overload Protection, Delete (on_value and below that) and select overload_protection
         then:
           - if:
               condition:
@@ -173,11 +174,11 @@ sensor:
                 - logger.log: "Overload Protection | Socket OFF"
     power:
       filters:
-        - multiply: 1.8430
+        - multiply: 1.8430 #Calibrate for your device with a reference mete
         - lambda: |-
             if (fabs(x) < 0.01) return 0.0;
             return x;
-        - throttle_average: 10s
+        - throttle_average: 10s #Update interval, you can change it
       name: "Refoss P11 Power"
       icon: mdi:flash-outline
       unit_of_measurement: "W"
@@ -228,7 +229,7 @@ sensor:
     state_class: "measurement"
     entity_category: "diagnostic"
     #Overheat Protection
-    on_value:
+    on_value: #If you don't want Overheat Protection, Delete (on_value and below that) and select overheat_protection
       then:
         - if:
             condition:
