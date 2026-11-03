@@ -88,7 +88,7 @@ mqtt: #If you don't have or want MQTT Broker, Delete (mqtt and below that)
 uart:
   rx_pin: GPIO03
   baud_rate: 4800
-  id: power_monitoring
+  parity: EVEN
 
 #Device
 switch:
@@ -106,7 +106,7 @@ switch:
   - platform: gpio
     pin:
       number: GPIO12
-      inverted: yes
+      inverted: true
     id: led
     name: "Refoss P11 Switch LED"
     internal: true
@@ -118,11 +118,13 @@ light:
       inverted: true
     name: "Refoss P11 Status LED"
     internal: true
+    entity_category: "diagnostic"
 
 binary_sensor:
   - platform: gpio
     pin:
       number: GPIO05
+      inverted: true
     name: "Refoss P11 Power Button"
     entity_category: "diagnostic"
     on_press:
@@ -136,7 +138,6 @@ binary_sensor:
 
 sensor:
   - platform: cse7766
-    uart_id: power_monitoring
     voltage:
       filters:
         - multiply: 1.8955 #Calibrate for your device with a reference mete
@@ -146,6 +147,7 @@ sensor:
       unit_of_measurement: "V"
       device_class: "voltage"
       state_class: "measurement"
+      accuracy_decimals: 1
     current:
       filters:
         - multiply: 0.9723 #Calibrate for your device with a reference mete
@@ -158,6 +160,7 @@ sensor:
       unit_of_measurement: "A"
       device_class: "current"
       state_class: "measurement"
+      accuracy_decimals: 2
       #Overload Protection
       on_value: #If you don't want Overload Protection, Delete (on_value and below that) and select overload_protection
         then:
@@ -184,12 +187,13 @@ sensor:
       unit_of_measurement: "W"
       device_class: "power"
       state_class: "measurement"
+      accuracy_decimals: 2
       #Overload Fuse
       on_value_range: #If you don't have Overload Fuse, Delete (on_value_range and below that)
-        - above: 3400
+        - above: 3000
           then:
             - switch.turn_off: relay
-            - logger.log: "Overload Fuse | Socket turned OFF"
+            - logger.log: "Overload Fuse | Socket OFF"
 
 #Device Required
   - platform: adc
@@ -274,7 +278,7 @@ select:
     update_interval: 1s
     id: overload_protection
     name: "Refoss P11 Overload Protection"
-    icon: mdi:sync-alert
+    icon: mdi:flash-alert-outline
     entity_category: "config"
 
   - platform: template
@@ -287,7 +291,7 @@ select:
       - "50 °C"
       - "60 °C"
       - "70 °C"
-    initial_option: "70 °C"
+    initial_option: "60 °C"
     update_interval: 1s
     id: overheat_protection
     name: "Refoss P11 Overheat Protection"
