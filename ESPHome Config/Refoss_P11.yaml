@@ -82,7 +82,7 @@ mqtt: #If you don't have or want MQTT Broker, Delete (mqtt and below that)
   password: #Password or !secret mqtt_broker_password
   client_id: "Refoss P11"
   topic_prefix: "Refoss P11"
-  discovery: false #If you chnnge to true Home Assistant don't discovery device only from MQTT Integration
+  discovery: false #If you change to true Home Assistant don't discovery device only from MQTT Integration
 
 #Device Required
 uart:
