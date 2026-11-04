@@ -24,7 +24,7 @@ wifi:
     subnet: #Router Subnet IP
   ap:
     ssid: "Refoss P11 Dzuriš Home AP"
-    password: #Acess Point password or !secret ap_password
+    password: #Access Point password or !secret ap_password
 
 #WiFi Hotspot
 captive_portal:
