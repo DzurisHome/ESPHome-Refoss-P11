@@ -1,6 +1,4 @@
-<a href="https://esphome.io"><img align="right" src="Images/Buttons/ESPHome-Compatible.svg" height="48" alt="Compatible with ESPHome"></a>
-
-# ESPHome Refoss P11
+# ESPHome Refoss P11 <a href="https://esphome.io"><img align="right" src="Images/Buttons/ESPHome-Compatible.svg" height="48" alt="Compatible with ESPHome"></a>
 
 <a href="https://linktr.ee/DzurisHome"><img src="Images/Buttons/Linktree.svg" height="36" alt="Find me on Linktree"></a>&nbsp;
 <a href="https://ko-fi.com/DzurisHome"><img src="https://ko-fi.com/img/githubbutton_sm.svg" height="36" alt="Support me on Ko-fi"></a>
@@ -29,8 +27,7 @@
 
 </br>
 
-![Home Assistant ESPHome Integration Bedroom Radiator Socket](Images/Home%20Assistant%20ESPHome%20Integration%20Bedroom%20Radiator%20Socket.png)
-![ESPHome WebServer Bedroom Radiator Socket](Images/ESPHome%20WebServer%20Bedroom%20Radiator%20Socket.png)
+<img src="Images/Home%20Assistant%20ESPHome%20Integration%20Bedroom%20Radiator%20Socket.png" height="575" alt="Home Assistant ESPHome Integration Bedroom Radiator Socket"> <img src="Images/ESPHome%20WebServer%20Bedroom%20Radiator%20Socket.png" height="575" alt="ESPHome WebServer Bedroom Radiator Socket">
 
 </br>
 
@@ -45,7 +42,7 @@
 
 </br>
 
-![Refoss P11](Images/Refoss%20P11.png)
+<img src="Images/Refoss%20P11.png" height="548" alt="Refoss P11">
 
 | Refoss P11           |
 |----------------------|
@@ -77,7 +74,7 @@
 - [Refoss P11](ESPHome%20Config/Refoss_P11.yaml)
 
 ### Firmware
-<a href="https://dzurishome.github.io/ESPHome-Refoss-P11/"><img src="Images/Buttons/Ready-made-Firmware.svg" width="420" alt="Install Ready-made Firmware"></a>
+<a href="https://dzurishome.github.io/ESPHome-Refoss-P11/"><img src="Images/Buttons/Ready-made-Firmware.svg" width="374" alt="Install Ready-made Firmware"></a>
 
 </br>
 
