@@ -76,7 +76,7 @@
 - [Minimal](ESPHome%20Config/Refoss_P11_Minimal.yaml)
 - [Refoss P11](ESPHome%20Config/Refoss_P11.yaml)
 
-### Ready-made Firmware
+### Firmware
 <a href="https://dzurishome.github.io/ESPHome-Refoss-P11/"><img src="Images/Buttons/Ready-made-Firmware.svg" width="420" alt="Install Ready-made Firmware"></a>
 
 </br>
