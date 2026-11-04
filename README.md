@@ -1,9 +1,9 @@
-<a href="https://esphome.io"><img align="right" src="https://img.shields.io/badge/ESPHome-Compatible-000000?style=for-the-badge&logo=esphome&logoColor=white" alt="ESPHome Compatible"></a>
+<a href="https://esphome.io"><img align="right" src="Images/Buttons/ESPHome-Compatible.svg" height="48" alt="Compatible with ESPHome"></a>
 
 # ESPHome Refoss P11
 
-<a href="https://linktr.ee/DzurisHome"><img src="https://img.shields.io/badge/Linktree-DzurisHome-43E55E?style=for-the-badge&logo=linktree&logoColor=white" alt="Linktree"></a>
-<a href="https://ko-fi.com/DzurisHome"><img src="https://img.shields.io/badge/Ko--fi-Support_me-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white" alt="Support me on Ko-fi"></a>
+<a href="https://linktr.ee/DzurisHome"><img src="Images/Buttons/Linktree.svg" height="36" alt="Find me on Linktree"></a>&nbsp;
+<a href="https://ko-fi.com/DzurisHome"><img src="https://ko-fi.com/img/githubbutton_sm.svg" height="36" alt="Support me on Ko-fi"></a>
 
 </br>
 
@@ -77,7 +77,7 @@
 - [Refoss P11](ESPHome%20Config/Refoss_P11.yaml)
 
 ### Ready-made Firmware
-[![Install Ready-made Firmware](https://img.shields.io/badge/Install-Ready--made_Firmware-03A9F4?style=for-the-badge&logo=esphome&logoColor=white)](https://dzurishome.github.io/ESPHome-Refoss-P11/)
+<a href="https://dzurishome.github.io/ESPHome-Refoss-P11/"><img src="Images/Buttons/Ready-made-Firmware.svg" width="420" alt="Install Ready-made Firmware"></a>
 
 </br>
 
@@ -91,5 +91,5 @@
 
 </br>
 
-<a href="https://linktr.ee/DzurisHome"><img src="https://img.shields.io/badge/Linktree-DzurisHome-43E55E?style=for-the-badge&logo=linktree&logoColor=white" alt="Linktree"></a>
-<a href="https://ko-fi.com/DzurisHome"><img src="https://img.shields.io/badge/Ko--fi-Support_me-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white" alt="Support me on Ko-fi"></a>
+<a href="https://linktr.ee/DzurisHome"><img src="Images/Buttons/Linktree.svg" height="36" alt="Find me on Linktree"></a>&nbsp;
+<a href="https://ko-fi.com/DzurisHome"><img src="https://ko-fi.com/img/githubbutton_sm.svg" height="36" alt="Support me on Ko-fi"></a>
